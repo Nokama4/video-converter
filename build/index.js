@@ -100,9 +100,11 @@ function App() {
 // route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
 var routes_exports = {};
 __export(routes_exports, {
-  default: () => Index
+  default: () => Index,
+  loader: () => loader
 });
 var import_styled2 = __toESM(require("@emotion/styled"));
+var import_node = require("@remix-run/node");
 
 // app/components/Nav.tsx
 var import_styled = __toESM(require("@emotion/styled"));
@@ -142,11 +144,46 @@ var List = () => {
 };
 var List_default = List;
 
+// app/models/videos.server.ts
+var import_aws_sdk = __toESM(require("aws-sdk"));
+var import_uuid = require("uuid");
+var getVideos = async () => {
+  console.log(process.env);
+  import_aws_sdk.default.config.update({
+    region: "eu-west-3",
+    accessKeyId: process.env.ACCESS_KEY_ID,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY
+  });
+  const dynamoDb = new import_aws_sdk.default.DynamoDB.DocumentClient();
+  const params = {
+    TableName: "videos"
+  };
+  dynamoDb.scan(params, (err, data) => {
+    if (err) {
+      console.log(err);
+      return null;
+    } else {
+      const { Items } = data;
+      return {
+        videos: Items
+      };
+    }
+  });
+};
+
 // route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
 var MyStyledH1 = import_styled2.default.h1`
   font-size: 5rem;
   color: green;
 `;
+var loader = async ({ request, params }) => {
+  console.log(params, "noteId not found");
+  const note = await getVideos();
+  if (!note) {
+    throw new Response("Not Found", { status: 404 });
+  }
+  return (0, import_node.json)({ note });
+};
 function Index() {
   return /* @__PURE__ */ React.createElement("div", {
     style: { fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }
@@ -154,7 +191,7 @@ function Index() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "0a69a5be", "entry": { "module": "/build/entry.client-HMTQCS2W.js", "imports": ["/build/_shared/chunk-CUUXFFIR.js", "/build/_shared/chunk-WXJ2FZ7Z.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-JBROCR43.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-7LX7ELT6.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-0A69A5BE.js" };
+var assets_manifest_default = { "version": "0aabf0e1", "entry": { "module": "/build/entry.client-EEGA4PEK.js", "imports": ["/build/_shared/chunk-OOOT6WWT.js", "/build/_shared/chunk-2MLTBGTY.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-GG4ZGEWS.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-NWHFNPZL.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-0AABF0E1.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };
