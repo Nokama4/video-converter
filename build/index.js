@@ -74,6 +74,7 @@ function handleRequest(request, responseStatusCode, responseHeaders, remixContex
 var root_exports = {};
 __export(root_exports, {
   default: () => App,
+  links: () => links,
   meta: () => meta
 });
 var import_react3 = require("@remix-run/react");
@@ -82,6 +83,14 @@ var meta = () => ({
   title: "New Remix App",
   viewport: "width=device-width,initial-scale=1"
 });
+var links = () => {
+  return [
+    {
+      rel: "stylesheet",
+      href: "https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css"
+    }
+  ];
+};
 function App() {
   return /* @__PURE__ */ React.createElement("html", {
     lang: "en"
@@ -93,23 +102,59 @@ var routes_exports = {};
 __export(routes_exports, {
   default: () => Index
 });
+var import_styled2 = __toESM(require("@emotion/styled"));
+
+// app/components/Nav.tsx
 var import_styled = __toESM(require("@emotion/styled"));
-var MyStyledH1 = import_styled.default.h1`
+var import_Stack = __toESM(require("@mui/material/Stack"));
+var import_Button = __toESM(require("@mui/material/Button"));
+var Container = import_styled.default.div({
+  borderBottom: "1px solid gray",
+  padding: "1em"
+});
+var Nav = () => {
+  const activeStyle = {
+    textDecoration: "underline"
+  };
+  return /* @__PURE__ */ React.createElement(Container, null, /* @__PURE__ */ React.createElement(import_Stack.default, {
+    spacing: 2,
+    direction: "row"
+  }, /* @__PURE__ */ React.createElement(import_Button.default, {
+    variant: "contained"
+  }, "Upload video")));
+};
+var Nav_default = Nav;
+
+// app/components/List/data.ts
+var videos = [
+  { id: 1, title: "Video 1", description: "Description 1", url: "https://www.youtube.com/embed/1" },
+  { id: 2, title: "Video 2", description: "Description 2", url: "https://www.youtube.com/embed/2" },
+  { id: 3, title: "Video 3", description: "Description 3", url: "https://www.youtube.com/embed/3" },
+  { id: 4, title: "Video 4", description: "Description 4", url: "https://www.youtube.com/embed/4" },
+  { id: 5, title: "Video 5", description: "Description 5", url: "https://www.youtube.com/embed/5" }
+];
+
+// app/components/List/index.tsx
+var List = () => {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "List"), /* @__PURE__ */ React.createElement("div", null, videos.map((video) => /* @__PURE__ */ React.createElement("div", {
+    key: video.id
+  }, /* @__PURE__ */ React.createElement("h2", null, video.title), /* @__PURE__ */ React.createElement("p", null, video.description)))));
+};
+var List_default = List;
+
+// route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
+var MyStyledH1 = import_styled2.default.h1`
   font-size: 5rem;
   color: green;
 `;
 function Index() {
   return /* @__PURE__ */ React.createElement("div", {
     style: { fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }
-  }, /* @__PURE__ */ React.createElement(MyStyledH1, null, "Welcome to Remix"), /* @__PURE__ */ React.createElement("ul", null, /* @__PURE__ */ React.createElement("li", null, /* @__PURE__ */ React.createElement("a", {
-    target: "_blank",
-    href: "https://remix.run/tutorials/blog",
-    rel: "noreferrer"
-  }, "Quickstart Blog Tutorial"))));
+  }, /* @__PURE__ */ React.createElement(Nav_default, null), /* @__PURE__ */ React.createElement(List_default, null));
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "87ce4053", "entry": { "module": "/build/entry.client-67FDA4GA.js", "imports": ["/build/_shared/chunk-NCGCX5IO.js", "/build/_shared/chunk-WXJ2FZ7Z.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-V6KUZVH7.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-PBIEHOSH.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-87CE4053.js" };
+var assets_manifest_default = { "version": "0a69a5be", "entry": { "module": "/build/entry.client-HMTQCS2W.js", "imports": ["/build/_shared/chunk-CUUXFFIR.js", "/build/_shared/chunk-WXJ2FZ7Z.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-JBROCR43.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-7LX7ELT6.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-0A69A5BE.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };
