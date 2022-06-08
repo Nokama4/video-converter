@@ -3,11 +3,10 @@ import videojs from 'video.js'
 import qualitySelector from 'videojs-hls-quality-selector'
 import qualityLevels from 'videojs-contrib-quality-levels'
 
-export default function VideoPlayer(props) {
-  const { autoPlay = true, controls = true, responsive = true, fluid = true, src } = props
+const VideoPlayer = (src: string, options: any, onReady: Function) => {
+  
   const videoRef = React.useRef(null)
-  const playerRef = React.useRef(null)
-  const { options, onReady } = props
+  const playerRef = React.useRef<any>(null)
 
   React.useEffect(() => {
     if (!playerRef.current) {
@@ -19,14 +18,14 @@ export default function VideoPlayer(props) {
       const player = (playerRef.current = videojs(
         videoElement,
         {
-          autoplay: autoPlay,
-          controls,
-          responsive,
-          fluid,
+          autoplay: false,
+          controls: true,
+          // responsive,
+          // fluid,
           sources: [
             {
               src,
-              withCredentials: true
+              //withCredentials: true
               // type: 'application/x-mpegURL'
             }
           ]
@@ -64,9 +63,4 @@ export default function VideoPlayer(props) {
   )
 }
 
-function callTrackingUrl(url) {
-  if (!url) return
-  try {
-    fetch(url, { credentials: 'include' })
-  } catch {}
-}
+export default VideoPlayer

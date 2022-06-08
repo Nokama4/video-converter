@@ -14,11 +14,11 @@
     "@remix-run/node": "^1.5.1",
     "@remix-run/react": "^1.5.1",
     "@remix-run/serve": "^1.5.1",
+    "@types/video.js": "^7.3.40",
+    "@types/videojs-contrib-quality-levels": "^2.0.1",
+    "@types/videojs-hls-quality-selector": "^1.1.0",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "video.js": "^7.19.2",
-    "videojs-contrib-quality-levels": "^2.1.0",
-    "videojs-hls-quality-selector": "^1.1.4"
+    "react-dom": "^17.0.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.5.1",
@@ -26,7 +26,10 @@
     "@types/react": "^17.0.45",
     "@types/react-dom": "^17.0.17",
     "eslint": "^8.15.0",
-    "typescript": "^4.6.4"
+    "typescript": "^4.6.4",
+    "video.js": "^7.19.2",
+    "videojs-contrib-quality-levels": "^2.1.0",
+    "videojs-hls-quality-selector": "^1.1.4"
   },
   "engines": {
     "node": ">=14"

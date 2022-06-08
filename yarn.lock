@@ -1070,6 +1070,25 @@
   resolved "https://registry.yarnpkg.com/@types/unist/-/unist-2.0.6.tgz#250a7b16c3b91f672a24552ec64678eeb1d3a08d"
   integrity sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==
 
+"@types/video.js@*", "@types/video.js@^7.3.40":
+  version "7.3.40"
+  resolved "https://registry.yarnpkg.com/@types/video.js/-/video.js-7.3.40.tgz#99354c0b3d84d2cd5dbf74be86b08136978af1ea"
+  integrity sha512-4g4kBhw3FfZTsvZkTriBYgL6nrbCP9BKA1XlogME/n2DthI08YzPAfnGEEy1J5iFG7wPTnxWNjTJe5jiYpMChQ==
+
+"@types/videojs-contrib-quality-levels@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/videojs-contrib-quality-levels/-/videojs-contrib-quality-levels-2.0.1.tgz#e0ff356539fe524209e89f794c339f87c6311953"
+  integrity sha512-a7vNjolI9zG269Ks8y6JC/Eut+BXex0/1haB8c2J7RCIn365EdTxgiT0udG2ObaCkQqZsa2+4KS7ZE1HMo113w==
+  dependencies:
+    "@types/video.js" "*"
+
+"@types/videojs-hls-quality-selector@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/videojs-hls-quality-selector/-/videojs-hls-quality-selector-1.1.0.tgz#1e694f764f4e11815da908ed8de1c9e572e81727"
+  integrity sha512-ZArUmr6fsd+KMb10B7F5B/eLZrw+J50DwY892NQdrkGx8hIrplVRyrWXMlzn6Khk6Bu2IMJcG91+xZHysYukZA==
+  dependencies:
+    "@types/video.js" "*"
+
 "@typescript-eslint/eslint-plugin@^5.12.1":
   version "5.27.1"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.27.1.tgz#fdf59c905354139046b41b3ed95d1609913d0758"

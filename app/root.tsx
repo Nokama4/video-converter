@@ -7,6 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import 'video.js/dist/video-js.css'
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",

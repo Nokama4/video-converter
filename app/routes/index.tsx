@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import 'video.js/dist/video-js.css'
 
 const MyStyledH1 = styled.h1`
   font-size: 5rem;
