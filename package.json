@@ -7,7 +7,7 @@
     "dev:node": "cross-env NODE_ENV=development nodemon ./server.js --watch ./server.js",
     "dev:css": "npm run generate:css -- --watch",
     "generate:css": "tailwindcss -o ./app/styles/tailwind.css",
-    "dev:remix": "remix watch",
+    "dev:remix": "node -r dotenv/config node_modules/.bin/remix watch",
     "start": "cross-env NODE_ENV=production node ./server.js"
   },
   "dependencies": {

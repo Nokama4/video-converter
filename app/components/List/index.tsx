@@ -1,7 +1,7 @@
 
-import { videos } from './data'
+// import { videos } from './data'
 
-const List = () => {
+const List = ({ videos }) => {
   return (
     <div>
       <h1>List</h1>
@@ -9,7 +9,6 @@ const List = () => {
         {videos.map(video => (
           <div key={video.id}>
             <h2>{video.title}</h2>
-            <p>{video.description}</p>
             </div>
         ))}
       </div>

@@ -66,7 +66,7 @@ __export(root_exports, {
 var import_react2 = require("@remix-run/react");
 
 // app/styles/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-W6QTUDKE.css";
+var tailwind_default = "/build/_assets/tailwind-GGMS2OGT.css";
 
 // route:/Users/carine/Desktop/video-converter/app/root.tsx
 var links = () => [
@@ -86,8 +86,11 @@ function App() {
 // route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
 var routes_exports = {};
 __export(routes_exports, {
-  default: () => Index
+  default: () => Index,
+  loader: () => loader
 });
+var import_node = require("@remix-run/node");
+var import_react5 = require("@remix-run/react");
 
 // app/components/Nav.tsx
 var import_react4 = require("react");
@@ -257,32 +260,52 @@ var Nav = () => {
 };
 var Nav_default = Nav;
 
-// app/components/List/data.ts
-var videos = [
-  { id: 1, title: "Video 1", description: "Description 1", url: "https://www.youtube.com/embed/1" },
-  { id: 2, title: "Video 2", description: "Description 2", url: "https://www.youtube.com/embed/2" },
-  { id: 3, title: "Video 3", description: "Description 3", url: "https://www.youtube.com/embed/3" },
-  { id: 4, title: "Video 4", description: "Description 4", url: "https://www.youtube.com/embed/4" },
-  { id: 5, title: "Video 5", description: "Description 5", url: "https://www.youtube.com/embed/5" }
-];
-
 // app/components/List/index.tsx
-var List = () => {
+var List = ({ videos }) => {
   return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "List"), /* @__PURE__ */ React.createElement("div", null, videos.map((video) => /* @__PURE__ */ React.createElement("div", {
     key: video.id
-  }, /* @__PURE__ */ React.createElement("h2", null, video.title), /* @__PURE__ */ React.createElement("p", null, video.description)))));
+  }, /* @__PURE__ */ React.createElement("h2", null, video.title)))));
 };
 var List_default = List;
 
+// app/models/videos.server.ts
+var import_aws_sdk = __toESM(require("aws-sdk"));
+var import_uuid = require("uuid");
+require("dotenv").config();
+import_aws_sdk.default.config.update({
+  region: "eu-west-3",
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY
+});
+var documentClient = new import_aws_sdk.default.DynamoDB.DocumentClient();
+var getVideos = async () => {
+  const params = {
+    TableName: "basicVideoTable"
+  };
+  let data = await documentClient.scan(params).promise();
+  const { Items } = data;
+  return Items;
+};
+
 // route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
+var loader = async ({ request, params }) => {
+  const videos = await getVideos();
+  if (!videos) {
+    throw new Response("Not Found", { status: 404 });
+  }
+  console.log(videos);
+  return (0, import_node.json)(videos);
+};
 function Index() {
   return /* @__PURE__ */ React.createElement("div", {
     style: { fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }
-  }, /* @__PURE__ */ React.createElement(Nav_default, null), /* @__PURE__ */ React.createElement(List_default, null));
+  }, /* @__PURE__ */ React.createElement(Nav_default, null), /* @__PURE__ */ React.createElement(List_default, {
+    videos: (0, import_react5.useLoaderData)()
+  }));
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "8e5b03e2", "entry": { "module": "/build/entry.client-24EEKTME.js", "imports": ["/build/_shared/chunk-4GDDSWSI.js", "/build/_shared/chunk-INMVB2G3.js", "/build/_shared/chunk-WXJ2FZ7Z.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-4XYS7Y3H.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-HETRRVOG.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-8E5B03E2.js" };
+var assets_manifest_default = { "version": "c19f1954", "entry": { "module": "/build/entry.client-Q757RDEH.js", "imports": ["/build/_shared/chunk-62B463J7.js", "/build/_shared/chunk-7IY5YADK.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-NF6QUQWI.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-GRRRGMCK.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-C19F1954.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };

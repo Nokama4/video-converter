@@ -1,31 +1,24 @@
 import AWS from 'aws-sdk';
 import { v1 as uuidv1 } from 'uuid';
+require('dotenv').config()
+
+AWS.config.update({
+  region: 'eu-west-3',
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+})
+
+const documentClient = new AWS.DynamoDB.DocumentClient();
 
 export const getVideos = async () => {
-  console.log(process.env);
-  
-  AWS.config.update({
-    region: 'eu-west-3',
-    accessKeyId: process.env.ACCESS_KEY_ID,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY,
-  })
-
-  const dynamoDb = new AWS.DynamoDB.DocumentClient();
   const params = {
-    TableName: 'videos',
+    TableName: 'basicVideoTable',
   };
 
-  dynamoDb.scan(params, (err, data) => {
-    if (err) {
-      console.log(err)
-      return null;
-    } else {
-        const { Items } = data;
-         return {
-          videos: Items
-        };
-    }
-});
+  let data = await documentClient.scan(params).promise();    
+  const { Items } = data;
+  
+  return Items;
 }
 
 export const addVideo = async (req, res) => {
@@ -38,7 +31,7 @@ export const addVideo = async (req, res) => {
   const Item = { ...req.body };
   Item.id = uuidv1();
   var params = {
-      TableName: 'videos',
+      TableName: 'basicVideoTable',
       Item: Item
   };
 

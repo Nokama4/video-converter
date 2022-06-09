@@ -472,22 +472,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   position: absolute;
 }
 
-.my-2 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
-.ml-2 {
-  margin-left: 0.5rem;
 }
 
 .mb-2 {
@@ -502,6 +489,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-top: 1rem;
 }
 
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
 .flex {
   display: flex;
 }
@@ -512,10 +503,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .hidden {
   display: none;
-}
-
-.h-10 {
-  height: 2.5rem;
 }
 
 .h-40 {
@@ -568,32 +555,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   border-width: 1px;
 }
 
-.border-2 {
-  border-width: 2px;
-}
-
 .border-black {
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity));
-}
-
-.border-red {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 30 30 / var(--tw-border-opacity));
-}
-
-.border-g {
-  --tw-border-opacity: 1;
-  border-color: rgb(37 37 37 / var(--tw-border-opacity));
-}
-
-.bg-neutral-1 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(20 20 22 / var(--tw-bg-opacity));
-}
-
-.bg-transparent {
-  background-color: transparent;
 }
 
 .bg-g {
@@ -605,37 +569,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   padding: 1rem;
 }
 
-.p-2 {
-  padding: 0.5rem;
-}
-
-.px-2 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-}
-
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
-}
-
-.font-bold {
-  font-weight: 700;
-}
-
-.text-neutral-5 {
-  --tw-text-opacity: 1;
-  color: rgb(177 181 195 / var(--tw-text-opacity));
-}
-
-.text-red {
-  --tw-text-opacity: 1;
-  color: rgb(255 30 30 / var(--tw-text-opacity));
 }
 
 .text-gtxt {
@@ -648,18 +584,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(38 222 208 / var(--tw-text-opacity));
 }
 
-.underline {
-  -webkit-text-decoration-line: underline;
-          text-decoration-line: underline;
-}
-
-.opacity-50 {
-  opacity: 0.5;
-}
-
-.outline-none {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
+.text-red {
+  --tw-text-opacity: 1;
+  color: rgb(255 30 30 / var(--tw-text-opacity));
 }
 
 .hover\:underline:hover {
