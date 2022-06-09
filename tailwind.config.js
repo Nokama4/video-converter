@@ -1,11 +1,9 @@
 const colors = require('tailwindcss/colors')
 
 module.exports = {
-  purge: [
-    './src/**/*.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
-  darkMode: false, // or 'media' or 'class'
+  content: ['./app/**/*.html',
+  './app/**/*.{js,ts,jsx,tsx}',
+],
   theme: {
     colors: {
       transparent: 'transparent',
@@ -98,8 +96,8 @@ module.exports = {
     }
   },
   plugins: [
-    require('tailwind-scrollbar-hide'),
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/line-clamp')
-  ]
+  require('tailwind-scrollbar-hide'),
+  require('@tailwindcss/aspect-ratio'),
+  require('@tailwindcss/line-clamp')
+],
 }

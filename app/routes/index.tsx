@@ -5,7 +5,7 @@ import { json } from "@remix-run/node";
 
 import Nav from '~/components/Nav';
 import List from '~/components/List';
-import { getVideos } from "./models/videos.server";
+import { getVideos } from "~/models/videos.server";
 
 // export const loader: LoaderFunction = async ({ request, params }) => {
 //   console.log(params, "noteId not found");

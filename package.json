@@ -6,7 +6,7 @@
     "dev": "remix build && run-p dev:*",
     "dev:node": "cross-env NODE_ENV=development nodemon ./server.js --watch ./server.js",
     "dev:css": "npm run generate:css -- --watch",
-    "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
+    "generate:css": "tailwindcss -o ./app/styles/tailwind.css",
     "dev:remix": "remix watch",
     "start": "cross-env NODE_ENV=production node ./server.js"
   },
