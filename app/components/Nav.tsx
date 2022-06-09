@@ -1,25 +1,54 @@
-import { Link } from "@remix-run/react";
-import styled from '@emotion/styled';
+import { useState } from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { padding } from "@mui/system";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 
-const Container = styled.div({
-  borderBottom: '1px solid gray',
-  padding: '1em'
-});
+// const Container = styled.div({
+//   borderBottom: '1px solid gray',
+//   padding: '1em'
+// });
+
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 const Nav = () => {
-  const activeStyle = {
-    textDecoration: "underline",
-  };
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
 
   return (
-    <Container>
+    <div>
       <Stack spacing={2} direction="row">
-        <Button variant="contained">Upload video</Button>
+        <Button variant="contained" onClick={handleOpen}>Upload video</Button>
+        <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Create a new video
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+        </Box>
+      </Modal>
       </Stack>
-    </Container>
+    </div>
   );
 }
 
