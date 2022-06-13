@@ -1,4 +1,6 @@
 import AWS from 'aws-sdk';
+
+import type { UploadHandler } from '@remix-run/node';
 import { v1 as uuidv1 } from 'uuid';
 require('dotenv').config()
 

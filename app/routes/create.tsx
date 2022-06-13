@@ -6,16 +6,44 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { useActionData, Form, useSubmit, useLoaderData } from "@remix-run/react";
+import type { ActionFunction } from "@remix-run/node";
+import { useActionData, Form } from "@remix-run/react";
+import type { UploadHandler } from "@remix-run/server-runtime";
+import {
+  json,
+  unstable_composeUploadHandlers as composeUploadHandlers,
+  unstable_createMemoryUploadHandler as createMemoryUploadHandler,
+  unstable_parseMultipartFormData as parseMultipartFormData,
+} from "@remix-run/node";import * as Video from '~/models/videos.server'
 
-import * as Video from '~/models/videos.server'
+import { s3UploadHandler } from "~/utils/s3.server";
 import Upload from '~/components/display/Upload';
 
+type CustomFile = {
+  key: string;
+  filename: string;
+};
+
 export const action: ActionFunction = async ({ request, params }) => {
-  const body = await request.formData();
-  // console.log(body.get('title'), params, request);
-  return null
+  console.log({ params});
+  
+  const uploadHandler: UploadHandler = composeUploadHandlers(
+    s3UploadHandler,
+    createMemoryUploadHandler()
+  );
+  const formData = await parseMultipartFormData(request, uploadHandler);
+  const imgSrc = formData.get("files");
+  const imgDesc = formData.get("title");
+
+  if (!imgSrc) {
+    return json({
+      error: "Something went wrong while uploading",
+    });
+  }
+  return json({
+    imgSrc,
+    imgDesc,
+  });
 }
 
 const style = {
@@ -64,11 +92,11 @@ const Create = () => {
 
   return (
   <Box sx={style}>
-    <Form method="post" action='/create'>
+    <Form method="post" action='/create' encType="multipart/form-data">
     {/* <Typography id="modal-modal-title" variant="h6" component="h2">
       Create a new video
     </Typography> */}
-    {/* <Upload
+    <Upload
       sublabel='Add video to upload to S3'
       name='asset'
       onChange={onChangeAsset}
@@ -83,9 +111,7 @@ const Create = () => {
       label="Title"
       value={title}
       onChange={handleChange}
-    /> */}
-
-    <input type='text' name='title' onChange={handleChange} value={title} />
+    />
 
     <Button type='submit'>Submit</Button>
     </Form>

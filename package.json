@@ -11,6 +11,9 @@
     "start": "cross-env NODE_ENV=production node ./server.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.107.0",
+    "@aws-sdk/lib-storage": "^3.108.1",
+    "@aws-sdk/middleware-apply-body-checksum": "^3.78.0",
     "@emotion/cache": "^11.7.1",
     "@emotion/react": "^11.9.0",
     "@emotion/server": "^11.4.0",

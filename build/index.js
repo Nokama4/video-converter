@@ -89,10 +89,12 @@ __export(create_exports, {
   action: () => action,
   default: () => create_default
 });
-var import_react3 = require("react");
+var import_react4 = require("react");
 var import_Button = __toESM(require("@mui/material/Button"));
 var import_Box = __toESM(require("@mui/material/Box"));
-var import_react4 = require("@remix-run/react");
+var import_TextField = __toESM(require("@mui/material/TextField"));
+var import_react5 = require("@remix-run/react");
+var import_node2 = require("@remix-run/node");
 
 // app/models/videos.server.ts
 var import_aws_sdk = __toESM(require("aws-sdk"));
@@ -113,10 +115,159 @@ var getVideos = async () => {
   return Items;
 };
 
+// app/utils/s3.server.ts
+var import_aws_sdk2 = __toESM(require("aws-sdk"));
+var import_node = require("@remix-run/node");
+var import_stream = require("stream");
+var { ACCESS_KEY_ID, SECRET_ACCESS_KEY } = process.env;
+if (!(ACCESS_KEY_ID && SECRET_ACCESS_KEY)) {
+  throw new Error(`Storage is missing required configuration.`);
+}
+var uploadStream = ({ Key }) => {
+  const s3 = new import_aws_sdk2.default.S3({
+    credentials: {
+      accessKeyId: ACCESS_KEY_ID,
+      secretAccessKey: SECRET_ACCESS_KEY
+    },
+    region: "eu-west-3"
+  });
+  const pass = new import_stream.PassThrough();
+  return {
+    writeStream: pass,
+    promise: s3.upload({ Bucket: "cdn-carine", Key, Body: pass }).promise()
+  };
+};
+async function uploadStreamToS3(data, filename) {
+  const stream = uploadStream({
+    Key: `nft/${filename}`
+  });
+  await (0, import_node.writeAsyncIterableToWritable)(data, stream.writeStream);
+  const file = await stream.promise;
+  return file.Location;
+}
+var s3UploadHandler = async ({
+  name,
+  filename,
+  data
+}) => {
+  if (name !== "files") {
+    return void 0;
+  }
+  const uploadedFileLocation = await uploadStreamToS3(data, filename);
+  return uploadedFileLocation;
+};
+
+// app/components/display/Upload.tsx
+var import_react3 = require("react");
+var TYPES = {
+  "image/png": "image",
+  "image/jpeg": "image",
+  "image/jpg": "image",
+  "image/webp": "image",
+  "image/gif": "image",
+  "video/mp4": "video",
+  "video/quicktime": "video",
+  "video/mov": "video"
+};
+function FileUpload(props) {
+  const {
+    value,
+    onChange,
+    label,
+    sublabel,
+    maxSize = 4e7,
+    acceptTypes = "image/*,.mp4,.mov",
+    description = "PNG, GIF, WEBP or MP4.",
+    isMultiple = false,
+    hasPreview = true
+  } = props;
+  const [sizeReached, setSizeReached] = (0, import_react3.useState)(false);
+  const [id] = (0, import_react3.useState)(Math.random().toString(36));
+  const onFileChange = (e) => {
+    var _a;
+    const file = ((_a = e == null ? void 0 : e.target) == null ? void 0 : _a.files) ? e.target.files[0] : null;
+    if (file && maxSize && file.size >= maxSize) {
+      return setSizeReached(true);
+    }
+    setSizeReached(false);
+    onChange(e);
+  };
+  const assetPreview = (asset) => {
+    if (!asset)
+      return null;
+    const type = TYPES[asset == null ? void 0 : asset.type] || "image";
+    const previewClass = "w-full max-w-max	border-black rounded border flex-grow max-h-96";
+    return type === "image" ? /* @__PURE__ */ React.createElement("img", {
+      src: asset && URL.createObjectURL(asset),
+      alt: "preview-unlockable",
+      className: previewClass
+    }) : /* @__PURE__ */ React.createElement("video", {
+      autoPlay: true,
+      muted: true,
+      loop: true,
+      playsInline: true,
+      src: asset && URL.createObjectURL(asset),
+      className: previewClass
+    });
+  };
+  const preview = (0, import_react3.useMemo)(() => {
+    return assetPreview(value);
+  }, [value]);
+  const isGb = maxSize && maxSize >= 1e9;
+  return /* @__PURE__ */ React.createElement("div", {
+    className: `my-4 w-full flex flex-col`
+  }, /* @__PURE__ */ React.createElement("div", {
+    className: "mb-2"
+  }, label), !preview && sublabel && /* @__PURE__ */ React.createElement("div", {
+    className: "text-gtxt text-sm mb-4"
+  }, sublabel), hasPreview && /* @__PURE__ */ React.createElement(React.Fragment, null, preview || /* @__PURE__ */ React.createElement("label", {
+    htmlFor: id,
+    className: "w-full h-40 rounded bg-g text-gtxt flex-grow flex flex-col items-center justify-center cursor-pointer "
+  }, /* @__PURE__ */ React.createElement("img", {
+    src: "/images/upload.svg",
+    alt: "file-upload-icon"
+  }), `${description} Max ${new Intl.NumberFormat("en-US", {
+    style: "unit",
+    unit: isGb ? "gigabyte" : "megabyte",
+    maximumSignificantDigits: isGb ? 2 : 1,
+    unitDisplay: "short"
+  }).format(maxSize / (isGb ? 1e9 : 1e6))}`), preview && /* @__PURE__ */ React.createElement("p", {
+    className: "mt-4 text-sm text-primary hover:underline",
+    onClick: onChange
+  }, "Remove")), /* @__PURE__ */ React.createElement("input", {
+    type: "file",
+    name: "file",
+    multiple: isMultiple,
+    id,
+    onChange: onFileChange,
+    className: "hidden",
+    accept: acceptTypes
+  }), sizeReached && /* @__PURE__ */ React.createElement("p", {
+    className: "text-red mt-2"
+  }, "File size must be maximum of", " ", new Intl.NumberFormat("en-US", {
+    style: "unit",
+    unit: isGb ? "gigabyte" : "megabyte",
+    maximumSignificantDigits: isGb ? 2 : 1,
+    unitDisplay: "short"
+  }).format(maxSize / (isGb ? 1e9 : 1e6))));
+}
+
 // route:/Users/carine/Desktop/video-converter/app/routes/create.tsx
 var action = async ({ request, params }) => {
-  const body = await request.formData();
-  return null;
+  console.log({ params });
+  const uploadHandler = (0, import_node2.unstable_composeUploadHandlers)(s3UploadHandler, (0, import_node2.unstable_createMemoryUploadHandler)());
+  const formData = await (0, import_node2.unstable_parseMultipartFormData)(request, uploadHandler);
+  const imgSrc = formData.get("files");
+  const imgDesc = formData.get("title");
+  if (!imgSrc) {
+    return (0, import_node2.json)({
+      error: "Something went wrong while uploading"
+    });
+  }
+  return (0, import_node2.json)({
+    imgSrc,
+    imgDesc
+  });
 };
 var style = {
   position: "absolute",
@@ -132,10 +283,10 @@ var style = {
   flexDirection: "column"
 };
 var Create = () => {
-  const actionData = (0, import_react4.useActionData)();
-  const [open, setOpen] = (0, import_react3.useState)(false);
-  const [asset, setAsset] = (0, import_react3.useState)(null);
-  const [title, setTitle] = (0, import_react3.useState)("");
+  const actionData = (0, import_react5.useActionData)();
+  const [open, setOpen] = (0, import_react4.useState)(false);
+  const [asset, setAsset] = (0, import_react4.useState)(null);
+  const [title, setTitle] = (0, import_react4.useState)("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleChange = (event) => {
@@ -153,14 +304,23 @@ var Create = () => {
   };
   return /* @__PURE__ */ React.createElement(import_Box.default, {
     sx: style
-  }, /* @__PURE__ */ React.createElement(import_react4.Form, {
+  }, /* @__PURE__ */ React.createElement(import_react5.Form, {
     method: "post",
-    action: "/create"
-  }, /* @__PURE__ */ React.createElement("input", {
-    type: "text",
+    action: "/create",
+    encType: "multipart/form-data"
+  }, /* @__PURE__ */ React.createElement(FileUpload, {
+    sublabel: "Add video to upload to S3",
+    name: "asset",
+    onChange: onChangeAsset,
+    value: asset,
+    maxSize: 52e9
+  }), /* @__PURE__ */ React.createElement(import_TextField.default, {
+    id: "outlined-name",
     name: "title",
-    onChange: handleChange,
-    value: title
+    color: "primary",
+    label: "Title",
+    value: title,
+    onChange: handleChange
   }), /* @__PURE__ */ React.createElement(import_Button.default, {
     type: "submit"
   }, "Submit")));
@@ -173,8 +333,8 @@ __export(routes_exports, {
   default: () => Index,
   loader: () => loader
 });
-var import_node = require("@remix-run/node");
-var import_react5 = require("@remix-run/react");
+var import_node3 = require("@remix-run/node");
+var import_react6 = require("@remix-run/react");
 var import_Button2 = __toESM(require("@mui/material/Button"));
 
 // app/components/List/index.tsx
@@ -191,7 +351,7 @@ var loader = async ({ request, params }) => {
   if (!videos) {
     throw new Response("Not Found", { status: 404 });
   }
-  return (0, import_node.json)(videos);
+  return (0, import_node3.json)(videos);
 };
 function Index() {
   return /* @__PURE__ */ React.createElement("div", {
@@ -200,15 +360,15 @@ function Index() {
     className: "p-4 border-b-1 border-black"
   }, /* @__PURE__ */ React.createElement(import_Button2.default, {
     variant: "contained"
-  }, /* @__PURE__ */ React.createElement(import_react5.NavLink, {
+  }, /* @__PURE__ */ React.createElement(import_react6.NavLink, {
     to: "create"
   }, "Upload video"))), /* @__PURE__ */ React.createElement(List_default, {
-    videos: (0, import_react5.useLoaderData)()
+    videos: (0, import_react6.useLoaderData)()
   }));
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "a2d16d1f", "entry": { "module": "/build/entry.client-Y7FO37OI.js", "imports": ["/build/_shared/chunk-PAMZWZCO.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-KE432MDH.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-TLSPEG4C.js", "imports": ["/build/_shared/chunk-DO3DDVQI.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-F46RFWLF.js", "imports": ["/build/_shared/chunk-DO3DDVQI.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-A2D16D1F.js" };
+var assets_manifest_default = { "version": "5d747648", "entry": { "module": "/build/entry.client-REMHKB76.js", "imports": ["/build/_shared/chunk-CW7GI47H.js", "/build/_shared/chunk-YVNSWNJF.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-HB7X3ZVX.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-OXD56SP6.js", "imports": ["/build/_shared/chunk-OK23H4BL.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-ZBOT3JPP.js", "imports": ["/build/_shared/chunk-OK23H4BL.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-5D747648.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };
