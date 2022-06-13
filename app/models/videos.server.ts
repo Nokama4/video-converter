@@ -21,33 +21,27 @@ export const getVideos = async () => {
   return Items;
 }
 
-export const addVideo = async (req, res) => {
+export const addVideo = async ({ asset, title}) => {
+  let item = { id : uuidv1(), title, src: 'COucou' };
   AWS.config.update({
     region: 'eu-west-3',
     accessKeyId: process.env.ACCESS_KEY_ID,
     secretAccessKey: process.env.SECRET_ACCESS_KEY,
   })
   const docClient = new AWS.DynamoDB.DocumentClient();
-  const Item = { ...req.body };
-  Item.id = uuidv1();
+
   var params = {
       TableName: 'basicVideoTable',
-      Item: Item
+      Item: item
   };
 
   // Call DynamoDB to add the item to the table
   docClient.put(params, function (err, data) {
       if (err) {
-          res.send({
-              success: false,
-              message: err
-          });
+          console.log("Error", err);
+          
       } else {
-          res.send({
-              success: true,
-              message: 'Added movie',
-              video: data
-          });
+          return data
       }
   });
 }

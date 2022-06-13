@@ -83,190 +83,16 @@ function App() {
   }, /* @__PURE__ */ React.createElement("head", null, /* @__PURE__ */ React.createElement(import_react2.Meta, null), /* @__PURE__ */ React.createElement(import_react2.Links, null)), /* @__PURE__ */ React.createElement("body", null, /* @__PURE__ */ React.createElement(import_react2.Outlet, null), /* @__PURE__ */ React.createElement(import_react2.ScrollRestoration, null), /* @__PURE__ */ React.createElement(import_react2.Scripts, null), /* @__PURE__ */ React.createElement(import_react2.LiveReload, null)));
 }
 
-// route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
-var routes_exports = {};
-__export(routes_exports, {
-  default: () => Index,
-  loader: () => loader
+// route:/Users/carine/Desktop/video-converter/app/routes/create.tsx
+var create_exports = {};
+__export(create_exports, {
+  action: () => action,
+  default: () => create_default
 });
-var import_node = require("@remix-run/node");
-var import_react5 = require("@remix-run/react");
-
-// app/components/Nav.tsx
-var import_react4 = require("react");
-var import_Stack = __toESM(require("@mui/material/Stack"));
+var import_react3 = require("react");
 var import_Button = __toESM(require("@mui/material/Button"));
 var import_Box = __toESM(require("@mui/material/Box"));
-var import_Typography = __toESM(require("@mui/material/Typography"));
-var import_Modal = __toESM(require("@mui/material/Modal"));
-var import_TextField = __toESM(require("@mui/material/TextField"));
-
-// app/components/display/Upload.tsx
-var import_react3 = require("react");
-var TYPES = {
-  "image/png": "image",
-  "image/jpeg": "image",
-  "image/jpg": "image",
-  "image/webp": "image",
-  "image/gif": "image",
-  "video/mp4": "video",
-  "video/quicktime": "video",
-  "video/mov": "video"
-};
-function FileUpload(props) {
-  const {
-    value,
-    onChange,
-    label,
-    sublabel,
-    maxSize = 4e7,
-    acceptTypes = "image/*,.mp4,.mov",
-    description = "PNG, GIF, WEBP or MP4.",
-    isMultiple = false,
-    hasPreview = true
-  } = props;
-  const [sizeReached, setSizeReached] = (0, import_react3.useState)(false);
-  const [id] = (0, import_react3.useState)(Math.random().toString(36));
-  const onFileChange = (e) => {
-    var _a;
-    const file = ((_a = e == null ? void 0 : e.target) == null ? void 0 : _a.files) ? e.target.files[0] : null;
-    if (file && maxSize && file.size >= maxSize) {
-      return setSizeReached(true);
-    }
-    setSizeReached(false);
-    onChange(e);
-  };
-  const assetPreview = (asset) => {
-    if (!asset)
-      return null;
-    const type = TYPES[asset == null ? void 0 : asset.type] || "image";
-    const previewClass = "w-full max-w-max	border-black rounded border flex-grow max-h-96";
-    return type === "image" ? /* @__PURE__ */ React.createElement("img", {
-      src: asset && URL.createObjectURL(asset),
-      alt: "preview-unlockable",
-      className: previewClass
-    }) : /* @__PURE__ */ React.createElement("video", {
-      autoPlay: true,
-      muted: true,
-      loop: true,
-      playsInline: true,
-      src: asset && URL.createObjectURL(asset),
-      className: previewClass
-    });
-  };
-  const preview = (0, import_react3.useMemo)(() => {
-    return assetPreview(value);
-  }, [value]);
-  const isGb = maxSize && maxSize >= 1e9;
-  return /* @__PURE__ */ React.createElement("div", {
-    className: `my-4 w-full flex flex-col`
-  }, /* @__PURE__ */ React.createElement("div", {
-    className: "mb-2"
-  }, label), !preview && sublabel && /* @__PURE__ */ React.createElement("div", {
-    className: "text-gtxt text-sm mb-4"
-  }, sublabel), hasPreview && /* @__PURE__ */ React.createElement(React.Fragment, null, preview || /* @__PURE__ */ React.createElement("label", {
-    htmlFor: id,
-    className: "w-full h-40 rounded bg-g text-gtxt flex-grow flex flex-col items-center justify-center cursor-pointer "
-  }, /* @__PURE__ */ React.createElement("img", {
-    src: "/images/upload.svg",
-    alt: "file-upload-icon"
-  }), `${description} Max ${new Intl.NumberFormat("en-US", {
-    style: "unit",
-    unit: isGb ? "gigabyte" : "megabyte",
-    maximumSignificantDigits: isGb ? 2 : 1,
-    unitDisplay: "short"
-  }).format(maxSize / (isGb ? 1e9 : 1e6))}`), preview && /* @__PURE__ */ React.createElement("p", {
-    className: "mt-4 text-sm text-primary hover:underline",
-    onClick: onChange
-  }, "Remove")), /* @__PURE__ */ React.createElement("input", {
-    type: "file",
-    name: "file",
-    multiple: isMultiple,
-    id,
-    onChange: onFileChange,
-    className: "hidden",
-    accept: acceptTypes
-  }), sizeReached && /* @__PURE__ */ React.createElement("p", {
-    className: "text-red mt-2"
-  }, "File size must be maximum of", " ", new Intl.NumberFormat("en-US", {
-    style: "unit",
-    unit: isGb ? "gigabyte" : "megabyte",
-    maximumSignificantDigits: isGb ? 2 : 1,
-    unitDisplay: "short"
-  }).format(maxSize / (isGb ? 1e9 : 1e6))));
-}
-
-// app/components/Nav.tsx
-var style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-  display: "flex",
-  flexDirection: "column"
-};
-var Nav = () => {
-  const [open, setOpen] = (0, import_react4.useState)(false);
-  const [asset, setAsset] = (0, import_react4.useState)(null);
-  const [title, setTitle] = (0, import_react4.useState)("");
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleChange = (event) => {
-    setTitle(event.target.value);
-  };
-  const onChangeAsset = async (evt) => {
-    var _a, _b;
-    const file = (_b = (_a = evt == null ? void 0 : evt.target) == null ? void 0 : _a.files) == null ? void 0 : _b[0];
-    if (!file)
-      return setAsset(null);
-    setAsset(file);
-  };
-  return /* @__PURE__ */ React.createElement("div", {
-    className: "p-4 border-b-1 border-black"
-  }, /* @__PURE__ */ React.createElement(import_Stack.default, {
-    spacing: 2,
-    direction: "row"
-  }, /* @__PURE__ */ React.createElement(import_Button.default, {
-    variant: "contained",
-    onClick: handleOpen
-  }, "Upload video"), /* @__PURE__ */ React.createElement(import_Modal.default, {
-    open,
-    onClose: handleClose,
-    "aria-labelledby": "modal-modal-title",
-    "aria-describedby": "modal-modal-description"
-  }, /* @__PURE__ */ React.createElement(import_Box.default, {
-    sx: style
-  }, /* @__PURE__ */ React.createElement(import_Typography.default, {
-    id: "modal-modal-title",
-    variant: "h6",
-    component: "h2"
-  }, "Create a new video"), /* @__PURE__ */ React.createElement(FileUpload, {
-    sublabel: "Add video to upload to S3",
-    onChange: onChangeAsset,
-    value: asset,
-    maxSize: 52e9
-  }), /* @__PURE__ */ React.createElement(import_TextField.default, {
-    id: "outlined-name",
-    color: "primary",
-    label: "Title",
-    value: title,
-    onChange: handleChange
-  }), /* @__PURE__ */ React.createElement(import_Button.default, null, "Submit")))));
-};
-var Nav_default = Nav;
-
-// app/components/List/index.tsx
-var List = ({ videos }) => {
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "List"), /* @__PURE__ */ React.createElement("div", null, videos.map((video) => /* @__PURE__ */ React.createElement("div", {
-    key: video.id
-  }, /* @__PURE__ */ React.createElement("h2", null, video.title)))));
-};
-var List_default = List;
+var import_react4 = require("@remix-run/react");
 
 // app/models/videos.server.ts
 var import_aws_sdk = __toESM(require("aws-sdk"));
@@ -287,25 +113,102 @@ var getVideos = async () => {
   return Items;
 };
 
+// route:/Users/carine/Desktop/video-converter/app/routes/create.tsx
+var action = async ({ request, params }) => {
+  const body = await request.formData();
+  return null;
+};
+var style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+  display: "flex",
+  flexDirection: "column"
+};
+var Create = () => {
+  const actionData = (0, import_react4.useActionData)();
+  const [open, setOpen] = (0, import_react3.useState)(false);
+  const [asset, setAsset] = (0, import_react3.useState)(null);
+  const [title, setTitle] = (0, import_react3.useState)("");
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const handleChange = (event) => {
+    setTitle(event.target.value);
+  };
+  const onChangeAsset = async (evt) => {
+    var _a, _b;
+    const file = (_b = (_a = evt == null ? void 0 : evt.target) == null ? void 0 : _a.files) == null ? void 0 : _b[0];
+    if (!file)
+      return setAsset(null);
+    setAsset(file);
+  };
+  const handleSubmit = () => {
+    console.log(getVideos);
+  };
+  return /* @__PURE__ */ React.createElement(import_Box.default, {
+    sx: style
+  }, /* @__PURE__ */ React.createElement(import_react4.Form, {
+    method: "post",
+    action: "/create"
+  }, /* @__PURE__ */ React.createElement("input", {
+    type: "text",
+    name: "title",
+    onChange: handleChange,
+    value: title
+  }), /* @__PURE__ */ React.createElement(import_Button.default, {
+    type: "submit"
+  }, "Submit")));
+};
+var create_default = Create;
+
+// route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
+var routes_exports = {};
+__export(routes_exports, {
+  default: () => Index,
+  loader: () => loader
+});
+var import_node = require("@remix-run/node");
+var import_react5 = require("@remix-run/react");
+var import_Button2 = __toESM(require("@mui/material/Button"));
+
+// app/components/List/index.tsx
+var List = ({ videos }) => {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "List"), /* @__PURE__ */ React.createElement("div", null, videos.map((video) => /* @__PURE__ */ React.createElement("div", {
+    key: video.id
+  }, /* @__PURE__ */ React.createElement("h2", null, video.title)))));
+};
+var List_default = List;
+
 // route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
 var loader = async ({ request, params }) => {
   const videos = await getVideos();
   if (!videos) {
     throw new Response("Not Found", { status: 404 });
   }
-  console.log(videos);
   return (0, import_node.json)(videos);
 };
 function Index() {
   return /* @__PURE__ */ React.createElement("div", {
     style: { fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }
-  }, /* @__PURE__ */ React.createElement(Nav_default, null), /* @__PURE__ */ React.createElement(List_default, {
+  }, /* @__PURE__ */ React.createElement("div", {
+    className: "p-4 border-b-1 border-black"
+  }, /* @__PURE__ */ React.createElement(import_Button2.default, {
+    variant: "contained"
+  }, /* @__PURE__ */ React.createElement(import_react5.NavLink, {
+    to: "create"
+  }, "Upload video"))), /* @__PURE__ */ React.createElement(List_default, {
     videos: (0, import_react5.useLoaderData)()
   }));
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "c19f1954", "entry": { "module": "/build/entry.client-Q757RDEH.js", "imports": ["/build/_shared/chunk-62B463J7.js", "/build/_shared/chunk-7IY5YADK.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-NF6QUQWI.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-GRRRGMCK.js", "imports": void 0, "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-C19F1954.js" };
+var assets_manifest_default = { "version": "a2d16d1f", "entry": { "module": "/build/entry.client-Y7FO37OI.js", "imports": ["/build/_shared/chunk-PAMZWZCO.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-KE432MDH.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-TLSPEG4C.js", "imports": ["/build/_shared/chunk-DO3DDVQI.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-F46RFWLF.js", "imports": ["/build/_shared/chunk-DO3DDVQI.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-A2D16D1F.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };
@@ -317,6 +220,14 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: root_exports
+  },
+  "routes/create": {
+    id: "routes/create",
+    parentId: "root",
+    path: "create",
+    index: void 0,
+    caseSensitive: void 0,
+    module: create_exports
   },
   "routes/index": {
     id: "routes/index",

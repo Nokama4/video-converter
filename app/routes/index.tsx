@@ -1,7 +1,8 @@
 import 'video.js/dist/video-js.css'
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, NavLink } from "@remix-run/react";
+import Button from '@mui/material/Button';
 
 import Nav from '~/components/Nav';
 import List from '~/components/List';
@@ -13,7 +14,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     throw new Response("Not Found", { status: 404 });
   }
 
-  console.log(videos);
+  // console.log(videos, request);
   
   return json(videos);
 };
@@ -21,7 +22,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export default function Index() {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      <Nav />
+       <div className='p-4 border-b-1 border-black'>
+        <Button variant="contained"><NavLink to='create'>Upload video</NavLink></Button>
+       </div>
       <List videos={useLoaderData()} />
     </div>
   );
