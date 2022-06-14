@@ -179,6 +179,130 @@ var s3UploadHandler = async ({
   return uploadedFileLocation;
 };
 
+// app/utils/elemental.server.ts
+var import_aws_sdk3 = __toESM(require("aws-sdk"));
+var { ACCESS_KEY_ID: ACCESS_KEY_ID2, SECRET_ACCESS_KEY: SECRET_ACCESS_KEY2 } = process.env;
+if (!(ACCESS_KEY_ID2 && SECRET_ACCESS_KEY2)) {
+  throw new Error(`Storage is missing required configuration.`);
+}
+import_aws_sdk3.default.config.update({
+  region: "eu-west-3",
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY
+});
+var converter = new import_aws_sdk3.MediaConvert({ apiVersion: "2017-08-29" });
+var getEnpoints = async () => {
+  const params = {
+    MaxResults: 0
+  };
+  try {
+    const { Endpoints } = await converter.describeEndpoints(params).promise();
+    console.log("Your MediaConvert endpoint is ", Endpoints);
+    if (Endpoints && Endpoints.length > 0) {
+      import_aws_sdk3.default.config.mediaconvert = { endpoint: Endpoints[0].Url };
+    }
+    return Endpoints;
+  } catch (err) {
+    console.log("MediaConvert Error", err);
+  }
+};
+var convertVideo = async (inputFile, id) => {
+  await getEnpoints();
+  const params = {
+    "Queue": "arn:aws:mediaconvert:eu-west-3:602259669540:queues/Default",
+    "UserMetadata": {},
+    "Role": "arn:aws:iam::602259669540:role/service-role/MediaConvert_Default_Role",
+    "Settings": {
+      "TimecodeConfig": {
+        "Source": "ZEROBASED"
+      },
+      "OutputGroups": [
+        {
+          "CustomName": "Coucou",
+          "Name": "Apple HLS",
+          "Outputs": [
+            {
+              "ContainerSettings": {
+                "Container": "M3U8",
+                "M3u8Settings": {}
+              },
+              "VideoDescription": {
+                "CodecSettings": {
+                  "Codec": "H_264",
+                  "H264Settings": {
+                    "FramerateControl": "INITIALIZE_FROM_SOURCE",
+                    "RateControlMode": "QVBR",
+                    "SceneChangeDetect": "TRANSITION_DETECTION",
+                    "QualityTuningLevel": "MULTI_PASS_HQ"
+                  }
+                }
+              },
+              "AudioDescriptions": [
+                {
+                  "CodecSettings": {
+                    "Codec": "AAC",
+                    "AacSettings": {
+                      "Bitrate": 96e3,
+                      "CodingMode": "CODING_MODE_2_0",
+                      "SampleRate": 48e3
+                    }
+                  }
+                }
+              ],
+              "OutputSettings": {
+                "HlsSettings": {}
+              }
+            }
+          ],
+          "OutputGroupSettings": {
+            "Type": "HLS_GROUP_SETTINGS",
+            "HlsGroupSettings": {
+              "SegmentLength": 2,
+              "Destination": `s3://cdn-carine/nfts/${id}/`,
+              "MinSegmentLength": 0
+            }
+          },
+          "AutomatedEncodingSettings": {
+            "AbrSettings": {}
+          }
+        }
+      ],
+      "Inputs": [
+        {
+          "AudioSelectors": {
+            "Audio Selector 1": {
+              "DefaultSelection": "DEFAULT"
+            }
+          },
+          "VideoSelector": {},
+          "TimecodeSource": "ZEROBASED",
+          "FileInput": inputFile
+        }
+      ]
+    },
+    "BillingTagsSource": "JOB",
+    "AccelerationSettings": {
+      "Mode": "DISABLED"
+    },
+    "StatusUpdateInterval": "SECONDS_60",
+    "Priority": 0
+  };
+  try {
+    console.log("coucou");
+    const endpointPromise = await converter.createJob(params).promise().then(function(data) {
+      console.log("Job created! ", data);
+      return data;
+    }, function(err) {
+      console.log("Error", err);
+      return err;
+    });
+    console.log({ endpointPromise });
+    return endpointPromise;
+  } catch (err) {
+    console.log("MediaConvert Error", err);
+  }
+};
+
 // app/components/display/Upload.tsx
 var import_react3 = require("react");
 var TYPES = {
@@ -285,6 +409,7 @@ var action = async ({ request, params }) => {
     const startIndex = src.indexOf("nft/") - "nft/".length;
     const endIndex = src.lastIndexOf("/");
     const id = src.substring(startIndex, endIndex);
+    await convertVideo(src, id);
     const video = await addVideo({ title, src, id });
     return (0, import_node2.json)({ video });
   }
@@ -386,7 +511,7 @@ function Index() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "02e83f2b", "entry": { "module": "/build/entry.client-R6HOZ3SW.js", "imports": ["/build/_shared/chunk-SH2C4KVB.js", "/build/_shared/chunk-P4WYSKXF.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-LZZFYGCH.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-YXY2YZ2E.js", "imports": ["/build/_shared/chunk-Q2U5SATP.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-J3LO3YIW.js", "imports": ["/build/_shared/chunk-Q2U5SATP.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-02E83F2B.js" };
+var assets_manifest_default = { "version": "128f7152", "entry": { "module": "/build/entry.client-QTS22GRE.js", "imports": ["/build/_shared/chunk-P5MBR2AU.js", "/build/_shared/chunk-ZNMO5B5B.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-6YA72OCV.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-WYJO6SRZ.js", "imports": ["/build/_shared/chunk-AHWZS3EC.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-NIWOJJQH.js", "imports": ["/build/_shared/chunk-AHWZS3EC.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-128F7152.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };

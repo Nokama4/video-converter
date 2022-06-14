@@ -15,6 +15,7 @@ import {
 } from "@remix-run/node";import * as Video from '~/models/videos.server'
 
 import { s3UploadHandler } from "~/utils/s3.server";
+import { convertVideo } from '~/utils/elemental.server';
 import Upload from '~/components/display/Upload';
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -29,7 +30,10 @@ export const action: ActionFunction = async ({ request, params }) => {
     const endIndex = src.lastIndexOf('/');
     const id = src.substring(startIndex, endIndex);
     
+    await convertVideo(src, id)
     const video = await Video.addVideo({ title, src, id });
+
+
 
     return json({ video });
   }
