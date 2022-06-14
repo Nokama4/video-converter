@@ -1,7 +1,5 @@
 import AWS from 'aws-sdk';
 
-import type { UploadHandler } from '@remix-run/node';
-import { v1 as uuidv1 } from 'uuid';
 require('dotenv').config()
 
 AWS.config.update({
@@ -23,8 +21,14 @@ export const getVideos = async () => {
   return Items;
 }
 
-export const addVideo = async ({ asset, title}) => {
-  let item = { id : uuidv1(), title, src: 'COucou' };
+interface VideoPayload {
+  src: string;
+  id: string;
+  title: string;
+}
+
+export const addVideo = async ({ src, title, id}: VideoPayload) => {
+  let item = { id, src, title };
   AWS.config.update({
     region: 'eu-west-3',
     accessKeyId: process.env.ACCESS_KEY_ID,

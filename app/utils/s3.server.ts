@@ -2,6 +2,7 @@ import AWS from "aws-sdk"
 import type { UploadHandler } from "@remix-run/node"
 import { writeAsyncIterableToWritable } from "@remix-run/node"
 import { PassThrough } from "stream"
+import { v1 as uuidv1 } from 'uuid';
 
 const { ACCESS_KEY_ID, SECRET_ACCESS_KEY } = process.env
 
@@ -25,8 +26,10 @@ const uploadStream = ({ Key }: Pick<AWS.S3.Types.PutObjectRequest, 'Key'>) => {
 }
 
 export async function uploadStreamToS3(data: any, filename: string) {
+  const id = uuidv1()
+
   const stream = uploadStream({
-    Key: `nft/${filename}`,
+    Key: `nft/${id}/${filename}`,
   })
   await writeAsyncIterableToWritable(data, stream.writeStream)
   const file = await stream.promise
@@ -38,7 +41,7 @@ export const s3UploadHandler: UploadHandler = async ({
   filename,
   data,
 }) => {
-  if (name !== "files") {
+  if (name !== "file") {
     return undefined;
   }
   

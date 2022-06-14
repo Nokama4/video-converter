@@ -92,13 +92,13 @@ __export(create_exports, {
 var import_react4 = require("react");
 var import_Button = __toESM(require("@mui/material/Button"));
 var import_Box = __toESM(require("@mui/material/Box"));
+var import_Typography = __toESM(require("@mui/material/Typography"));
 var import_TextField = __toESM(require("@mui/material/TextField"));
 var import_react5 = require("@remix-run/react");
 var import_node2 = require("@remix-run/node");
 
 // app/models/videos.server.ts
 var import_aws_sdk = __toESM(require("aws-sdk"));
-var import_uuid = require("uuid");
 require("dotenv").config();
 import_aws_sdk.default.config.update({
   region: "eu-west-3",
@@ -114,11 +114,32 @@ var getVideos = async () => {
   const { Items } = data;
   return Items;
 };
+var addVideo = async ({ src, title, id }) => {
+  let item = { id, src, title };
+  import_aws_sdk.default.config.update({
+    region: "eu-west-3",
+    accessKeyId: process.env.ACCESS_KEY_ID,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY
+  });
+  const docClient = new import_aws_sdk.default.DynamoDB.DocumentClient();
+  var params = {
+    TableName: "basicVideoTable",
+    Item: item
+  };
+  docClient.put(params, function(err, data) {
+    if (err) {
+      console.log("Error", err);
+    } else {
+      return data;
+    }
+  });
+};
 
 // app/utils/s3.server.ts
 var import_aws_sdk2 = __toESM(require("aws-sdk"));
 var import_node = require("@remix-run/node");
 var import_stream = require("stream");
+var import_uuid = require("uuid");
 var { ACCESS_KEY_ID, SECRET_ACCESS_KEY } = process.env;
 if (!(ACCESS_KEY_ID && SECRET_ACCESS_KEY)) {
   throw new Error(`Storage is missing required configuration.`);
@@ -138,8 +159,9 @@ var uploadStream = ({ Key }) => {
   };
 };
 async function uploadStreamToS3(data, filename) {
+  const id = (0, import_uuid.v1)();
   const stream = uploadStream({
-    Key: `nft/${filename}`
+    Key: `nft/${id}/${filename}`
   });
   await (0, import_node.writeAsyncIterableToWritable)(data, stream.writeStream);
   const file = await stream.promise;
@@ -150,7 +172,7 @@ var s3UploadHandler = async ({
   filename,
   data
 }) => {
-  if (name !== "files") {
+  if (name !== "file") {
     return void 0;
   }
   const uploadedFileLocation = await uploadStreamToS3(data, filename);
@@ -254,20 +276,19 @@ function FileUpload(props) {
 
 // route:/Users/carine/Desktop/video-converter/app/routes/create.tsx
 var action = async ({ request, params }) => {
-  console.log({ params });
+  var _a, _b;
   const uploadHandler = (0, import_node2.unstable_composeUploadHandlers)(s3UploadHandler, (0, import_node2.unstable_createMemoryUploadHandler)());
   const formData = await (0, import_node2.unstable_parseMultipartFormData)(request, uploadHandler);
-  const imgSrc = formData.get("files");
-  const imgDesc = formData.get("title");
-  if (!imgSrc) {
-    return (0, import_node2.json)({
-      error: "Something went wrong while uploading"
-    });
+  const title = (_a = formData.get("title")) == null ? void 0 : _a.toString();
+  const src = (_b = formData.get("file")) == null ? void 0 : _b.toString();
+  if (title && src) {
+    const startIndex = src.indexOf("nft/") - "nft/".length;
+    const endIndex = src.lastIndexOf("/");
+    const id = src.substring(startIndex, endIndex);
+    const video = await addVideo({ title, src, id });
+    return (0, import_node2.json)({ video });
   }
-  return (0, import_node2.json)({
-    imgSrc,
-    imgDesc
-  });
+  return null;
 };
 var style = {
   position: "absolute",
@@ -283,12 +304,8 @@ var style = {
   flexDirection: "column"
 };
 var Create = () => {
-  const actionData = (0, import_react5.useActionData)();
-  const [open, setOpen] = (0, import_react4.useState)(false);
   const [asset, setAsset] = (0, import_react4.useState)(null);
   const [title, setTitle] = (0, import_react4.useState)("");
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
   const handleChange = (event) => {
     setTitle(event.target.value);
   };
@@ -299,16 +316,17 @@ var Create = () => {
       return setAsset(null);
     setAsset(file);
   };
-  const handleSubmit = () => {
-    console.log(getVideos);
-  };
   return /* @__PURE__ */ React.createElement(import_Box.default, {
     sx: style
   }, /* @__PURE__ */ React.createElement(import_react5.Form, {
     method: "post",
     action: "/create",
     encType: "multipart/form-data"
-  }, /* @__PURE__ */ React.createElement(FileUpload, {
+  }, /* @__PURE__ */ React.createElement(import_Typography.default, {
+    id: "modal-modal-title",
+    variant: "h6",
+    component: "h2"
+  }, "Create a new video"), /* @__PURE__ */ React.createElement(FileUpload, {
     sublabel: "Add video to upload to S3",
     name: "asset",
     onChange: onChangeAsset,
@@ -368,7 +386,7 @@ function Index() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "5d747648", "entry": { "module": "/build/entry.client-REMHKB76.js", "imports": ["/build/_shared/chunk-CW7GI47H.js", "/build/_shared/chunk-YVNSWNJF.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-HB7X3ZVX.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-OXD56SP6.js", "imports": ["/build/_shared/chunk-OK23H4BL.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-ZBOT3JPP.js", "imports": ["/build/_shared/chunk-OK23H4BL.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-5D747648.js" };
+var assets_manifest_default = { "version": "02e83f2b", "entry": { "module": "/build/entry.client-R6HOZ3SW.js", "imports": ["/build/_shared/chunk-SH2C4KVB.js", "/build/_shared/chunk-P4WYSKXF.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-LZZFYGCH.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-YXY2YZ2E.js", "imports": ["/build/_shared/chunk-Q2U5SATP.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-J3LO3YIW.js", "imports": ["/build/_shared/chunk-Q2U5SATP.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-02E83F2B.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };

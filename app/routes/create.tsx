@@ -1,13 +1,11 @@
 
 import { useState } from 'react';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import type { ActionFunction } from "@remix-run/node";
-import { useActionData, Form } from "@remix-run/react";
+import {  Form } from "@remix-run/react";
 import type { UploadHandler } from "@remix-run/server-runtime";
 import {
   json,
@@ -19,31 +17,24 @@ import {
 import { s3UploadHandler } from "~/utils/s3.server";
 import Upload from '~/components/display/Upload';
 
-type CustomFile = {
-  key: string;
-  filename: string;
-};
-
 export const action: ActionFunction = async ({ request, params }) => {
-  console.log({ params});
-  
-  const uploadHandler: UploadHandler = composeUploadHandlers(
-    s3UploadHandler,
-    createMemoryUploadHandler()
-  );
-  const formData = await parseMultipartFormData(request, uploadHandler);
-  const imgSrc = formData.get("files");
-  const imgDesc = formData.get("title");
+  const uploadHandler: UploadHandler = composeUploadHandlers(s3UploadHandler, createMemoryUploadHandler());
 
-  if (!imgSrc) {
-    return json({
-      error: "Something went wrong while uploading",
-    });
+  const formData = await parseMultipartFormData(request, uploadHandler);
+  const title = formData.get("title")?.toString();
+  const src = formData.get("file")?.toString();
+
+  if (title && src) {
+    const startIndex = src.indexOf('nft/') - 'nft/'.length;
+    const endIndex = src.lastIndexOf('/');
+    const id = src.substring(startIndex, endIndex);
+    
+    const video = await Video.addVideo({ title, src, id });
+
+    return json({ video });
   }
-  return json({
-    imgSrc,
-    imgDesc,
-  });
+
+  return null;
 }
 
 const style = {
@@ -61,16 +52,8 @@ const style = {
 };
 
 const Create = () => {
-  const actionData = useActionData();
-  // const submit = useSubmit();
-  // useLoaderData()
-
-  const [open, setOpen] = useState(false);
   const [asset, setAsset] = useState<File | null>(null);
   const [title, setTitle] = useState('');
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -83,19 +66,12 @@ const Create = () => {
     setAsset(file)
   }
 
-  const handleSubmit = () => {
-    console.log(Video.getVideos);
-
-    // addVideo({ title, asset });
-    // handleClose()
-  }
-
   return (
   <Box sx={style}>
     <Form method="post" action='/create' encType="multipart/form-data">
-    {/* <Typography id="modal-modal-title" variant="h6" component="h2">
+    <Typography id="modal-modal-title" variant="h6" component="h2">
       Create a new video
-    </Typography> */}
+    </Typography>
     <Upload
       sublabel='Add video to upload to S3'
       name='asset'
