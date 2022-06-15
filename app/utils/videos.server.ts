@@ -25,10 +25,31 @@ interface VideoPayload {
   src: string;
   id: string;
   title: string;
+  filename: string;
 }
 
-export const addVideo = async ({ src, title, id}: VideoPayload) => {
-  let item = { id, src, title };
+export const getVideo = async (id: string) => {
+  const params = {
+    TableName: 'basicVideoTable',
+    Key: { id }
+  };
+
+  let data = await documentClient.get(params).promise();    
+  const { Item } = data;
+  
+  return Item;
+}
+
+interface VideoPayload {
+  src: string;
+  id: string;
+  title: string;
+  filename: string;
+}
+
+
+export const addVideo = async ({ src, title, id, filename}: VideoPayload) => {
+  let item = { id, src, title, filename };
   AWS.config.update({
     region: 'eu-west-3',
     accessKeyId: process.env.ACCESS_KEY_ID,

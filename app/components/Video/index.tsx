@@ -3,7 +3,7 @@ import videojs from 'video.js'
 import qualitySelector from 'videojs-hls-quality-selector'
 import qualityLevels from 'videojs-contrib-quality-levels'
 
-const VideoPlayer = (src: string, options: any, onReady: Function) => {
+const VideoPlayer = (video, onReady: Function) => {
   
   const videoRef = React.useRef(null)
   const playerRef = React.useRef<any>(null)
@@ -24,7 +24,7 @@ const VideoPlayer = (src: string, options: any, onReady: Function) => {
           // fluid,
           sources: [
             {
-              src,
+              src: `https://cdn-carine.s3.eu-west-3.amazonaws.com/nft/${video.id}/${video.filename}.m3u8`,
               //withCredentials: true
               // type: 'application/x-mpegURL'
             }
@@ -42,7 +42,7 @@ const VideoPlayer = (src: string, options: any, onReady: Function) => {
       // player.autoplay(options.autoplay);
       // player.src(options.sources);
     }
-  }, [options, videoRef])
+  }, [videoRef])
 
   // Dispose the Video.js player when the functional component unmounts
   React.useEffect(() => {

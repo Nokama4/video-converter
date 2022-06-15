@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { useActionData, Form, useSubmit, useLoaderData } from "@remix-run/react";
 
-import * as Video from '~/models/videos.server'
+import * as Video from '~/utils/videos.server'
 import Upload from './display/Upload';
 
 export const actions: ActionFunction = async ({ request, params }) => {

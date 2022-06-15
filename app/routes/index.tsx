@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 
 import Nav from '~/components/Nav';
 import List from '~/components/List';
-import { getVideos } from "~/models/videos.server";
+import { getVideos } from "~/utils/videos.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const videos = await getVideos();

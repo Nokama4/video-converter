@@ -26,7 +26,7 @@ async (): Promise<MediaConvert.__listOfEndpoint | void> => {
       .describeEndpoints(params)
       .promise();
     console.log('Your MediaConvert endpoint is ', Endpoints);
-
+    
     if (Endpoints && Endpoints.length > 0) {
       AWS.config.mediaconvert = {endpoint : Endpoints[0].Url};
     }
@@ -36,10 +36,16 @@ async (): Promise<MediaConvert.__listOfEndpoint | void> => {
   }
 };
 
-export const convertVideo = async (
-  inputFile: string,
-  id: string,
-): Promise<MediaConvert.__listOfJob | void> => {
+interface convertPayload {
+  inputFile: string;
+  id: string;
+  filename: string;
+}
+export const convertVideo = async ({
+  inputFile,
+  id,
+  filename,
+}: convertPayload): Promise<MediaConvert.__listOfJob | void> => {
   await getEnpoints();
   // Create empty request parameters
   const params = {
@@ -92,7 +98,7 @@ export const convertVideo = async (
             "Type": "HLS_GROUP_SETTINGS",
             "HlsGroupSettings": {
               "SegmentLength": 2,
-              "Destination": `s3://cdn-carine/nfts/${id}/`,
+              "Destination": `s3://cdn-carine/nft/${id}/`,
               "MinSegmentLength": 0
             }
           },

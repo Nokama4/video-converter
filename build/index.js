@@ -66,7 +66,7 @@ __export(root_exports, {
 var import_react2 = require("@remix-run/react");
 
 // app/styles/tailwind.css
-var tailwind_default = "/build/_assets/tailwind-GGMS2OGT.css";
+var tailwind_default = "/build/_assets/tailwind-SSTNUZV5.css";
 
 // route:/Users/carine/Desktop/video-converter/app/root.tsx
 var links = () => [
@@ -83,21 +83,64 @@ function App() {
   }, /* @__PURE__ */ React.createElement("head", null, /* @__PURE__ */ React.createElement(import_react2.Meta, null), /* @__PURE__ */ React.createElement(import_react2.Links, null)), /* @__PURE__ */ React.createElement("body", null, /* @__PURE__ */ React.createElement(import_react2.Outlet, null), /* @__PURE__ */ React.createElement(import_react2.ScrollRestoration, null), /* @__PURE__ */ React.createElement(import_react2.Scripts, null), /* @__PURE__ */ React.createElement(import_react2.LiveReload, null)));
 }
 
-// route:/Users/carine/Desktop/video-converter/app/routes/create.tsx
-var create_exports = {};
-__export(create_exports, {
-  action: () => action,
-  default: () => create_default
+// route:/Users/carine/Desktop/video-converter/app/routes/video/$videoId.tsx
+var videoId_exports = {};
+__export(videoId_exports, {
+  default: () => videoId_default,
+  loader: () => loader
 });
-var import_react4 = require("react");
-var import_Button = __toESM(require("@mui/material/Button"));
-var import_Box = __toESM(require("@mui/material/Box"));
-var import_Typography = __toESM(require("@mui/material/Typography"));
-var import_TextField = __toESM(require("@mui/material/TextField"));
-var import_react5 = require("@remix-run/react");
-var import_node2 = require("@remix-run/node");
+var import_node = require("@remix-run/node");
+var import_react4 = require("@remix-run/react");
 
-// app/models/videos.server.ts
+// app/components/Video/index.tsx
+var import_react3 = __toESM(require("react"));
+var import_video = __toESM(require("video.js"));
+var import_videojs_hls_quality_selector = __toESM(require("videojs-hls-quality-selector"));
+var import_videojs_contrib_quality_levels = __toESM(require("videojs-contrib-quality-levels"));
+var VideoPlayer = (video, onReady) => {
+  const videoRef = import_react3.default.useRef(null);
+  const playerRef = import_react3.default.useRef(null);
+  import_react3.default.useEffect(() => {
+    if (!playerRef.current) {
+      const videoElement = videoRef.current;
+      if (!videoElement)
+        return;
+      import_video.default.registerPlugin("qualityLevels", import_videojs_contrib_quality_levels.default);
+      import_video.default.registerPlugin("hlsQualitySelector", import_videojs_hls_quality_selector.default);
+      const player = playerRef.current = (0, import_video.default)(videoElement, {
+        autoplay: false,
+        controls: true,
+        sources: [
+          {
+            src: `https://cdn-carine.s3.eu-west-3.amazonaws.com/nft/${video.id}/${video.filename}.m3u8`
+          }
+        ]
+      }, () => {
+        onReady && onReady(player);
+      });
+      player.hlsQualitySelector({ displayCurrentQuality: true });
+    } else {
+    }
+  }, [videoRef]);
+  import_react3.default.useEffect(() => {
+    const player = playerRef.current;
+    return () => {
+      if (player) {
+        player.dispose();
+        playerRef.current = null;
+      }
+    };
+  }, [playerRef]);
+  return /* @__PURE__ */ import_react3.default.createElement("div", {
+    "data-vjs-player": true
+  }, /* @__PURE__ */ import_react3.default.createElement("video", {
+    ref: videoRef,
+    className: "video-js vjs-big-play-centered"
+  }));
+};
+var Video_default = VideoPlayer;
+
+// app/utils/videos.server.ts
 var import_aws_sdk = __toESM(require("aws-sdk"));
 require("dotenv").config();
 import_aws_sdk.default.config.update({
@@ -114,8 +157,17 @@ var getVideos = async () => {
   const { Items } = data;
   return Items;
 };
-var addVideo = async ({ src, title, id }) => {
-  let item = { id, src, title };
+var getVideo = async (id) => {
+  const params = {
+    TableName: "basicVideoTable",
+    Key: { id }
+  };
+  let data = await documentClient.get(params).promise();
+  const { Item } = data;
+  return Item;
+};
+var addVideo = async ({ src, title, id, filename }) => {
+  let item = { id, src, title, filename };
   import_aws_sdk.default.config.update({
     region: "eu-west-3",
     accessKeyId: process.env.ACCESS_KEY_ID,
@@ -135,9 +187,42 @@ var addVideo = async ({ src, title, id }) => {
   });
 };
 
+// route:/Users/carine/Desktop/video-converter/app/routes/video/$videoId.tsx
+var loader = async ({ request, params }) => {
+  console.log(params);
+  if (params.videoId) {
+    const video = await getVideo(params == null ? void 0 : params.videoId);
+    if (!video) {
+      throw new Response("Not Found", { status: 404 });
+    }
+    console.log(video);
+    return (0, import_node.json)(video);
+  }
+};
+var Video = () => {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "Video"), /* @__PURE__ */ React.createElement(Video_default, {
+    video: (0, import_react4.useLoaderData)()
+  }));
+};
+var videoId_default = Video;
+
+// route:/Users/carine/Desktop/video-converter/app/routes/create.tsx
+var create_exports = {};
+__export(create_exports, {
+  action: () => action,
+  default: () => create_default
+});
+var import_react6 = require("react");
+var import_Button = __toESM(require("@mui/material/Button"));
+var import_Box = __toESM(require("@mui/material/Box"));
+var import_Typography = __toESM(require("@mui/material/Typography"));
+var import_TextField = __toESM(require("@mui/material/TextField"));
+var import_react7 = require("@remix-run/react");
+var import_node3 = require("@remix-run/node");
+
 // app/utils/s3.server.ts
 var import_aws_sdk2 = __toESM(require("aws-sdk"));
-var import_node = require("@remix-run/node");
+var import_node2 = require("@remix-run/node");
 var import_stream = require("stream");
 var import_uuid = require("uuid");
 var { ACCESS_KEY_ID, SECRET_ACCESS_KEY } = process.env;
@@ -163,7 +248,7 @@ async function uploadStreamToS3(data, filename) {
   const stream = uploadStream({
     Key: `nft/${id}/${filename}`
   });
-  await (0, import_node.writeAsyncIterableToWritable)(data, stream.writeStream);
+  await (0, import_node2.writeAsyncIterableToWritable)(data, stream.writeStream);
   const file = await stream.promise;
   return file.Location;
 }
@@ -206,7 +291,11 @@ var getEnpoints = async () => {
     console.log("MediaConvert Error", err);
   }
 };
-var convertVideo = async (inputFile, id) => {
+var convertVideo = async ({
+  inputFile,
+  id,
+  filename
+}) => {
   await getEnpoints();
   const params = {
     "Queue": "arn:aws:mediaconvert:eu-west-3:602259669540:queues/Default",
@@ -258,7 +347,7 @@ var convertVideo = async (inputFile, id) => {
             "Type": "HLS_GROUP_SETTINGS",
             "HlsGroupSettings": {
               "SegmentLength": 2,
-              "Destination": `s3://cdn-carine/nfts/${id}/`,
+              "Destination": `s3://cdn-carine/nft/${id}/`,
               "MinSegmentLength": 0
             }
           },
@@ -304,7 +393,7 @@ var convertVideo = async (inputFile, id) => {
 };
 
 // app/components/display/Upload.tsx
-var import_react3 = require("react");
+var import_react5 = require("react");
 var TYPES = {
   "image/png": "image",
   "image/jpeg": "image",
@@ -327,8 +416,8 @@ function FileUpload(props) {
     isMultiple = false,
     hasPreview = true
   } = props;
-  const [sizeReached, setSizeReached] = (0, import_react3.useState)(false);
-  const [id] = (0, import_react3.useState)(Math.random().toString(36));
+  const [sizeReached, setSizeReached] = (0, import_react5.useState)(false);
+  const [id] = (0, import_react5.useState)(Math.random().toString(36));
   const onFileChange = (e) => {
     var _a;
     const file = ((_a = e == null ? void 0 : e.target) == null ? void 0 : _a.files) ? e.target.files[0] : null;
@@ -356,7 +445,7 @@ function FileUpload(props) {
       className: previewClass
     });
   };
-  const preview = (0, import_react3.useMemo)(() => {
+  const preview = (0, import_react5.useMemo)(() => {
     return assetPreview(value);
   }, [value]);
   const isGb = maxSize && maxSize >= 1e9;
@@ -401,17 +490,22 @@ function FileUpload(props) {
 // route:/Users/carine/Desktop/video-converter/app/routes/create.tsx
 var action = async ({ request, params }) => {
   var _a, _b;
-  const uploadHandler = (0, import_node2.unstable_composeUploadHandlers)(s3UploadHandler, (0, import_node2.unstable_createMemoryUploadHandler)());
-  const formData = await (0, import_node2.unstable_parseMultipartFormData)(request, uploadHandler);
+  let filename = "video.mp4";
+  const uploadHandler = (0, import_node3.unstable_composeUploadHandlers)((data) => {
+    console.log({ data });
+    filename = data.filename || filename;
+    return s3UploadHandler(data);
+  }, (0, import_node3.unstable_createMemoryUploadHandler)());
+  const formData = await (0, import_node3.unstable_parseMultipartFormData)(request, uploadHandler);
   const title = (_a = formData.get("title")) == null ? void 0 : _a.toString();
   const src = (_b = formData.get("file")) == null ? void 0 : _b.toString();
   if (title && src) {
-    const startIndex = src.indexOf("nft/") - "nft/".length;
+    const startIndex = src.indexOf("nft/") + "nft/".length;
     const endIndex = src.lastIndexOf("/");
     const id = src.substring(startIndex, endIndex);
-    await convertVideo(src, id);
-    const video = await addVideo({ title, src, id });
-    return (0, import_node2.json)({ video });
+    await convertVideo({ inputFile: src, id, filename });
+    const video = await addVideo({ title, src, id, filename });
+    return (0, import_node3.json)({ video });
   }
   return null;
 };
@@ -429,8 +523,8 @@ var style = {
   flexDirection: "column"
 };
 var Create = () => {
-  const [asset, setAsset] = (0, import_react4.useState)(null);
-  const [title, setTitle] = (0, import_react4.useState)("");
+  const [asset, setAsset] = (0, import_react6.useState)(null);
+  const [title, setTitle] = (0, import_react6.useState)("");
   const handleChange = (event) => {
     setTitle(event.target.value);
   };
@@ -443,7 +537,7 @@ var Create = () => {
   };
   return /* @__PURE__ */ React.createElement(import_Box.default, {
     sx: style
-  }, /* @__PURE__ */ React.createElement(import_react5.Form, {
+  }, /* @__PURE__ */ React.createElement(import_react7.Form, {
     method: "post",
     action: "/create",
     encType: "multipart/form-data"
@@ -474,27 +568,36 @@ var create_default = Create;
 var routes_exports = {};
 __export(routes_exports, {
   default: () => Index,
-  loader: () => loader
+  loader: () => loader2
 });
-var import_node3 = require("@remix-run/node");
-var import_react6 = require("@remix-run/react");
+var import_node4 = require("@remix-run/node");
+var import_react9 = require("@remix-run/react");
 var import_Button2 = __toESM(require("@mui/material/Button"));
 
 // app/components/List/index.tsx
+var import_react8 = require("@remix-run/react");
 var List = ({ videos }) => {
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "List"), /* @__PURE__ */ React.createElement("div", null, videos.map((video) => /* @__PURE__ */ React.createElement("div", {
-    key: video.id
-  }, /* @__PURE__ */ React.createElement("h2", null, video.title)))));
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h1", null, "List"), /* @__PURE__ */ React.createElement("div", {
+    className: "flex flex-wrap px-4 justify-between"
+  }, videos.map((video, index) => /* @__PURE__ */ React.createElement("div", {
+    key: video.id,
+    className: "cursor-pointer"
+  }, /* @__PURE__ */ React.createElement(import_react8.NavLink, {
+    to: `/video/${video.id}`
+  }, /* @__PURE__ */ React.createElement("img", {
+    src: `https://picsum.photos/300/200?random=${index}`,
+    alt: video.title
+  }), /* @__PURE__ */ React.createElement("h2", null, video.title))))));
 };
 var List_default = List;
 
 // route:/Users/carine/Desktop/video-converter/app/routes/index.tsx
-var loader = async ({ request, params }) => {
+var loader2 = async ({ request, params }) => {
   const videos = await getVideos();
   if (!videos) {
     throw new Response("Not Found", { status: 404 });
   }
-  return (0, import_node3.json)(videos);
+  return (0, import_node4.json)(videos);
 };
 function Index() {
   return /* @__PURE__ */ React.createElement("div", {
@@ -503,15 +606,15 @@ function Index() {
     className: "p-4 border-b-1 border-black"
   }, /* @__PURE__ */ React.createElement(import_Button2.default, {
     variant: "contained"
-  }, /* @__PURE__ */ React.createElement(import_react6.NavLink, {
+  }, /* @__PURE__ */ React.createElement(import_react9.NavLink, {
     to: "create"
   }, "Upload video"))), /* @__PURE__ */ React.createElement(List_default, {
-    videos: (0, import_react6.useLoaderData)()
+    videos: (0, import_react9.useLoaderData)()
   }));
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "128f7152", "entry": { "module": "/build/entry.client-QTS22GRE.js", "imports": ["/build/_shared/chunk-P5MBR2AU.js", "/build/_shared/chunk-ZNMO5B5B.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-6YA72OCV.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-WYJO6SRZ.js", "imports": ["/build/_shared/chunk-AHWZS3EC.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-NIWOJJQH.js", "imports": ["/build/_shared/chunk-AHWZS3EC.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-128F7152.js" };
+var assets_manifest_default = { "version": "d0e0bda0", "entry": { "module": "/build/entry.client-RGW62LAW.js", "imports": ["/build/_shared/chunk-6HCIQPC6.js", "/build/_shared/chunk-IVHO5HDO.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-H26RCM2I.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-EIU7MFH7.js", "imports": ["/build/_shared/chunk-MYJZAUBA.js", "/build/_shared/chunk-DNDYQ3VT.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-CRQX3UMQ.js", "imports": ["/build/_shared/chunk-MYJZAUBA.js", "/build/_shared/chunk-DNDYQ3VT.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/video/$videoId": { "id": "routes/video/$videoId", "parentId": "root", "path": "video/:videoId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/video/$videoId-Q3PDVID2.js", "imports": ["/build/_shared/chunk-DNDYQ3VT.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-D0E0BDA0.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };
@@ -523,6 +626,14 @@ var routes = {
     index: void 0,
     caseSensitive: void 0,
     module: root_exports
+  },
+  "routes/video/$videoId": {
+    id: "routes/video/$videoId",
+    parentId: "root",
+    path: "video/:videoId",
+    index: void 0,
+    caseSensitive: void 0,
+    module: videoId_exports
   },
   "routes/create": {
     id: "routes/create",

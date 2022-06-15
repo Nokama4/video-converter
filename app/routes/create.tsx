@@ -12,28 +12,32 @@ import {
   unstable_composeUploadHandlers as composeUploadHandlers,
   unstable_createMemoryUploadHandler as createMemoryUploadHandler,
   unstable_parseMultipartFormData as parseMultipartFormData,
-} from "@remix-run/node";import * as Video from '~/models/videos.server'
+} from "@remix-run/node";import * as Video from '~/utils/videos.server'
 
 import { s3UploadHandler } from "~/utils/s3.server";
 import { convertVideo } from '~/utils/elemental.server';
 import Upload from '~/components/display/Upload';
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const uploadHandler: UploadHandler = composeUploadHandlers(s3UploadHandler, createMemoryUploadHandler());
+  let filename = 'video.mp4';
+  const uploadHandler: UploadHandler = composeUploadHandlers((data) => {
+    console.log({ data });
+    
+    filename = data.filename || filename;
+    return s3UploadHandler(data);
+  }, createMemoryUploadHandler());
 
   const formData = await parseMultipartFormData(request, uploadHandler);
   const title = formData.get("title")?.toString();
   const src = formData.get("file")?.toString();
 
   if (title && src) {
-    const startIndex = src.indexOf('nft/') - 'nft/'.length;
+    const startIndex = src.indexOf('nft/') + 'nft/'.length;
     const endIndex = src.lastIndexOf('/');
     const id = src.substring(startIndex, endIndex);
     
-    await convertVideo(src, id)
-    const video = await Video.addVideo({ title, src, id });
-
-
+    await convertVideo({inputFile: src, id, filename})
+    const video = await Video.addVideo({ title, src, id, filename });
 
     return json({ video });
   }
