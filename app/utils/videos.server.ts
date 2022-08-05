@@ -50,11 +50,6 @@ interface VideoPayload {
 
 export const addVideo = async ({ src, title, id, filename}: VideoPayload) => {
   let item = { id, src, title, filename };
-  AWS.config.update({
-    region: 'eu-west-3',
-    accessKeyId: process.env.ACCESS_KEY_ID,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY,
-  })
   const docClient = new AWS.DynamoDB.DocumentClient();
 
   var params = {

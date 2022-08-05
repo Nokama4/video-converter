@@ -68,10 +68,20 @@ var import_react2 = require("@remix-run/react");
 // app/styles/tailwind.css
 var tailwind_default = "/build/_assets/tailwind-SSTNUZV5.css";
 
+// app/styles/custom-style.css
+var custom_style_default = "/build/_assets/custom-style-BQ3Q2BZ6.css";
+
+// node_modules/video.js/dist/video-js.css
+var video_js_default = "/build/_assets/video-js-M3UXQIKF.css";
+
 // route:/Users/carine/Desktop/video-converter/app/root.tsx
-var links = () => [
-  { rel: "stylesheet", href: tailwind_default }
-];
+function links() {
+  return [
+    { rel: "stylesheet", href: tailwind_default },
+    { rel: "stylesheet", href: custom_style_default },
+    { rel: "stylesheet", href: video_js_default }
+  ];
+}
 var meta = () => ({
   charset: "utf-8",
   title: "New Remix App",
@@ -98,6 +108,7 @@ var import_video = __toESM(require("video.js"));
 var import_videojs_hls_quality_selector = __toESM(require("videojs-hls-quality-selector"));
 var import_videojs_contrib_quality_levels = __toESM(require("videojs-contrib-quality-levels"));
 var VideoPlayer = (video, onReady) => {
+  console.log(video);
   const videoRef = import_react3.default.useRef(null);
   const playerRef = import_react3.default.useRef(null);
   import_react3.default.useEffect(() => {
@@ -110,9 +121,11 @@ var VideoPlayer = (video, onReady) => {
       const player = playerRef.current = (0, import_video.default)(videoElement, {
         autoplay: false,
         controls: true,
+        responsive: true,
+        fluid: true,
         sources: [
           {
-            src: `https://cdn-carine.s3.eu-west-3.amazonaws.com/nft/${video.id}/${video.filename}.m3u8`
+            src: `https://cdn-carine.s3.eu-west-3.amazonaws.com/nft/${video.video.id}/${video.video.filename}.m3u8`
           }
         ]
       }, () => {
@@ -168,11 +181,6 @@ var getVideo = async (id) => {
 };
 var addVideo = async ({ src, title, id, filename }) => {
   let item = { id, src, title, filename };
-  import_aws_sdk.default.config.update({
-    region: "eu-west-3",
-    accessKeyId: process.env.ACCESS_KEY_ID,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY
-  });
   const docClient = new import_aws_sdk.default.DynamoDB.DocumentClient();
   var params = {
     TableName: "basicVideoTable",
@@ -614,7 +622,7 @@ function Index() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { "version": "d0e0bda0", "entry": { "module": "/build/entry.client-RGW62LAW.js", "imports": ["/build/_shared/chunk-6HCIQPC6.js", "/build/_shared/chunk-IVHO5HDO.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-H26RCM2I.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-EIU7MFH7.js", "imports": ["/build/_shared/chunk-MYJZAUBA.js", "/build/_shared/chunk-DNDYQ3VT.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-CRQX3UMQ.js", "imports": ["/build/_shared/chunk-MYJZAUBA.js", "/build/_shared/chunk-DNDYQ3VT.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/video/$videoId": { "id": "routes/video/$videoId", "parentId": "root", "path": "video/:videoId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/video/$videoId-Q3PDVID2.js", "imports": ["/build/_shared/chunk-DNDYQ3VT.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-D0E0BDA0.js" };
+var assets_manifest_default = { "version": "3edf8c8a", "entry": { "module": "/build/entry.client-VJESTZ7U.js", "imports": ["/build/_shared/chunk-JIWXM5LB.js", "/build/_shared/chunk-GIY4UAGX.js", "/build/_shared/chunk-BLIGAOTS.js"] }, "routes": { "root": { "id": "root", "parentId": void 0, "path": "", "index": void 0, "caseSensitive": void 0, "module": "/build/root-4YD2772X.js", "imports": void 0, "hasAction": false, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/create": { "id": "routes/create", "parentId": "root", "path": "create", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/create-ZUDYXC76.js", "imports": ["/build/_shared/chunk-YV6SFERB.js", "/build/_shared/chunk-TCZGRP7C.js"], "hasAction": true, "hasLoader": false, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/index": { "id": "routes/index", "parentId": "root", "path": void 0, "index": true, "caseSensitive": void 0, "module": "/build/routes/index-LJ36XZ6Q.js", "imports": ["/build/_shared/chunk-YV6SFERB.js", "/build/_shared/chunk-TCZGRP7C.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false }, "routes/video/$videoId": { "id": "routes/video/$videoId", "parentId": "root", "path": "video/:videoId", "index": void 0, "caseSensitive": void 0, "module": "/build/routes/video/$videoId-OEYHTKGN.js", "imports": ["/build/_shared/chunk-TCZGRP7C.js"], "hasAction": false, "hasLoader": true, "hasCatchBoundary": false, "hasErrorBoundary": false } }, "url": "/build/manifest-3EDF8C8A.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var entry = { module: entry_server_exports };

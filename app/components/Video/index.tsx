@@ -5,6 +5,9 @@ import qualityLevels from 'videojs-contrib-quality-levels'
 
 const VideoPlayer = (video, onReady: Function) => {
   
+  console.log(video);
+  
+  
   const videoRef = React.useRef(null)
   const playerRef = React.useRef<any>(null)
 
@@ -20,11 +23,11 @@ const VideoPlayer = (video, onReady: Function) => {
         {
           autoplay: false,
           controls: true,
-          // responsive,
-          // fluid,
+          responsive: true,
+          fluid: true,
           sources: [
             {
-              src: `https://cdn-carine.s3.eu-west-3.amazonaws.com/nft/${video.id}/${video.filename}.m3u8`,
+              src: `https://cdn-carine.s3.eu-west-3.amazonaws.com/nft/${video.video.id}/${video.video.filename}.m3u8`,
               //withCredentials: true
               // type: 'application/x-mpegURL'
             }

@@ -8,10 +8,17 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import styles from "./styles/tailwind.css";
+import videoStyles from "./styles/custom-style.css";
+import videoJsStyle from 'video.js/dist/video-js.css'
 
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: styles },
-];
+export function links() {
+  return [
+    { rel: "stylesheet", href: styles },
+    { rel: "stylesheet", href: videoStyles },
+    { rel: "stylesheet", href: videoJsStyle },
+  ];
+}
+
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
